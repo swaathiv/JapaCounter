@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Japa Tracker</title>
-  <link rel="stylesheet" href="style.css?v=3">
+  <link rel="stylesheet" href="style.css?v=4">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
@@ -73,7 +73,7 @@
     <!-- ===== TAB: ADD (Home) ===== -->
     <main id="tab-add" class="tab-content active">
       <div class="add-hero">
-        <p class="add-greeting">Hare Krishna, <span id="greeting-name"></span></p>
+        <p class="add-greeting">Om Muruga, <span id="greeting-name"></span></p>
         <div class="today-badge">
           <span class="today-label">Today</span>
           <span class="today-value" id="today-count">0</span>
@@ -90,7 +90,10 @@
         </form>
       </section>
 
-      <!-- Recent entries on add page (compact) -->
+    </main>
+
+    <!-- ===== TAB: HISTORY ===== -->
+    <main id="tab-history" class="tab-content">
       <section class="card history-card">
         <h2>Recent Entries</h2>
         <table id="entries-table">
@@ -174,6 +177,10 @@
         <span class="nav-icon">&#9776;</span>
         <span class="nav-label">Dashboard</span>
       </button>
+      <button class="nav-tab" data-tab="tab-history">
+        <span class="nav-icon">&#128203;</span>
+        <span class="nav-label">History</span>
+      </button>
     </nav>
   </div>
 
@@ -213,6 +220,6 @@
     </div>
   </div>
 
-  <script src="app.js?v=3"></script>
+  <script src="app.js?v=4"></script>
 </body>
 </html>
