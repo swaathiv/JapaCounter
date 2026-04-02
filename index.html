@@ -49,7 +49,7 @@
       <form id="setup-form">
         <label for="setup-name">Your Name</label>
         <input type="text" id="setup-name" placeholder="Enter your name" required>
-        <label for="setup-target">Japa Target (total rounds)</label>
+        <label for="setup-target">Japa Target (total japas)</label>
         <input type="number" id="setup-target" placeholder="e.g. 100000" min="1" required>
         <button type="submit" class="btn btn-primary">Start Tracking</button>
       </form>
@@ -75,7 +75,7 @@
       <section class="card progress-card">
         <h2>Overall Progress</h2>
         <div class="progress-info">
-          <span id="total-count">0</span> / <span id="target-count">0</span> rounds
+          <span id="total-count">0</span> / <span id="target-count">0</span> japas
         </div>
         <div class="progress-bar-container">
           <div class="progress-bar" id="progress-bar" style="width: 0%"></div>
@@ -87,12 +87,12 @@
       <section class="card add-card">
         <h2>Add Japa Rounds</h2>
         <form id="add-japa-form" class="add-form">
-          <input type="number" id="japa-input" placeholder="Number of rounds" min="1" required>
+          <input type="number" id="japa-input" placeholder="Number of japas" min="1" required>
           <input type="date" id="japa-date" required>
           <button type="submit" class="btn btn-primary">Add</button>
         </form>
         <div class="today-total">
-          Today's total: <strong id="today-count">0</strong> rounds
+          Today's total: <strong id="today-count">0</strong> japas
         </div>
       </section>
 
