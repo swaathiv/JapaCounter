@@ -33,6 +33,16 @@ function showScreen(name) {
   screens[name].classList.add('active');
 }
 
+// -------- BOTTOM NAV TAB SWITCHING --------
+$$('.nav-tab').forEach((tab) => {
+  tab.addEventListener('click', () => {
+    $$('.nav-tab').forEach((t) => t.classList.remove('active'));
+    tab.classList.add('active');
+    $$('.tab-content').forEach((tc) => tc.classList.remove('active'));
+    $('#' + tab.dataset.tab).classList.add('active');
+  });
+});
+
 // -------- AUTH --------
 // Tab switching
 $$('.auth-tab').forEach((tab) => {
@@ -411,8 +421,9 @@ function renderDashboard() {
   $('#progress-bar').style.width = pct + '%';
   $('#progress-percent').textContent = pct.toFixed(1) + '%';
 
-  // Today
+  // Today + greeting
   $('#today-count').textContent = stats.todayTotal.toLocaleString();
+  $('#greeting-name').textContent = profile.name;
 
   // Stats
   $('#stat-week').textContent = stats.weekTotal.toLocaleString();
