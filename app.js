@@ -7,7 +7,7 @@
 const SUPABASE_URL = 'https://lpchdzhgtvmplhzyoies.supabase.co';
 const SUPABASE_ANON_KEY = 'sb_publishable_2WI_B0OkGgK8yGAeoYJEjQ_nADe_EX-';
 
-const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 // -------- STATE --------
 let currentUser = null;
@@ -52,7 +52,7 @@ $('#login-form').addEventListener('submit', async (e) => {
   btn.disabled = true;
   $('#auth-message').textContent = '';
 
-  const { error } = await supabase.auth.signInWithPassword({
+  const { error } = await db.auth.signInWithPassword({
     email: $('#login-email').value.trim(),
     password: $('#login-password').value,
   });
@@ -69,7 +69,7 @@ $('#signup-form').addEventListener('submit', async (e) => {
   btn.disabled = true;
   $('#auth-message').textContent = '';
 
-  const { error } = await supabase.auth.signUp({
+  const { error } = await db.auth.signUp({
     email: $('#signup-email').value.trim(),
     password: $('#signup-password').value,
   });
@@ -84,7 +84,7 @@ $('#signup-form').addEventListener('submit', async (e) => {
 });
 
 $('#logout-btn').addEventListener('click', async () => {
-  await supabase.auth.signOut();
+  await db.auth.signOut();
 });
 
 // -------- SETUP (FIRST LOGIN) --------
@@ -97,7 +97,7 @@ $('#setup-form').addEventListener('submit', async (e) => {
   const name = $('#setup-name').value.trim();
   const target = parseInt($('#setup-target').value, 10);
 
-  const { error } = await supabase.from('profiles').insert({
+  const { error } = await db.from('profiles').insert({
     id: currentUser.id,
     name,
     target,
@@ -128,7 +128,7 @@ $('#settings-form').addEventListener('submit', async (e) => {
   const name = $('#settings-name').value.trim();
   const target = parseInt($('#settings-target').value, 10);
 
-  const { error } = await supabase
+  const { error } = await db
     .from('profiles')
     .update({ name, target })
     .eq('id', currentUser.id);
@@ -160,7 +160,7 @@ $('#add-japa-form').addEventListener('submit', async (e) => {
   const btn = e.target.querySelector('button');
   btn.disabled = true;
 
-  const { data, error } = await supabase
+  const { data, error } = await db
     .from('japa_entries')
     .insert({
       user_id: currentUser.id,
@@ -198,7 +198,7 @@ $('#edit-form').addEventListener('submit', async (e) => {
   const count = parseInt($('#edit-count').value, 10);
   const entryDate = $('#edit-date').value;
 
-  const { error } = await supabase
+  const { error } = await db
     .from('japa_entries')
     .update({ count, entry_date: entryDate })
     .eq('id', id);
@@ -220,7 +220,7 @@ $('#edit-delete').addEventListener('click', async () => {
   const id = $('#edit-id').value;
   if (!confirm('Delete this entry?')) return;
 
-  const { error } = await supabase.from('japa_entries').delete().eq('id', id);
+  const { error } = await db.from('japa_entries').delete().eq('id', id);
 
   if (error) {
     alert('Error deleting entry: ' + error.message);
@@ -233,7 +233,7 @@ $('#edit-delete').addEventListener('click', async () => {
 
 // -------- LOAD ENTRIES --------
 async function loadAllEntries() {
-  const { data, error } = await supabase
+  const { data, error } = await db
     .from('japa_entries')
     .select('*')
     .eq('user_id', currentUser.id)
@@ -494,7 +494,7 @@ function renderEntries() {
       row.querySelector('.btn-edit').addEventListener('click', () => openEditModal(entry));
       row.querySelector('.btn-del').addEventListener('click', async () => {
         if (!confirm('Delete this entry?')) return;
-        const { error } = await supabase.from('japa_entries').delete().eq('id', entry.id);
+        const { error } = await db.from('japa_entries').delete().eq('id', entry.id);
         if (!error) {
           allEntries = allEntries.filter((e) => e.id !== entry.id);
           renderDashboard();
@@ -558,7 +558,7 @@ async function handleAuthChange(session) {
   currentUser = session.user;
 
   // Check if profile exists
-  const { data } = await supabase
+  const { data } = await db
     .from('profiles')
     .select('*')
     .eq('id', currentUser.id)
@@ -573,11 +573,11 @@ async function handleAuthChange(session) {
 }
 
 // Listen for auth changes
-supabase.auth.onAuthStateChange((_event, session) => {
+db.auth.onAuthStateChange((_event, session) => {
   handleAuthChange(session);
 });
 
 // Initial check
-supabase.auth.getSession().then(({ data: { session } }) => {
+db.auth.getSession().then(({ data: { session } }) => {
   handleAuthChange(session);
 });
