@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Japa Tracker</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+
+  <!-- Loading spinner -->
+  <div id="loading" class="screen active">
+    <div class="loader"></div>
+  </div>
+
+  <!-- ==================== AUTH SCREEN ==================== -->
+  <div id="auth-screen" class="screen">
+    <div class="auth-container">
+      <h1 class="logo">Japa Tracker</h1>
+      <p class="tagline">Track your spiritual journey, one round at a time</p>
+
+      <div class="auth-tabs">
+        <button class="auth-tab active" data-tab="login">Log In</button>
+        <button class="auth-tab" data-tab="signup">Sign Up</button>
+      </div>
+
+      <form id="login-form" class="auth-form">
+        <input type="email" id="login-email" placeholder="Email" required>
+        <input type="password" id="login-password" placeholder="Password" required>
+        <button type="submit" class="btn btn-primary">Log In</button>
+      </form>
+
+      <form id="signup-form" class="auth-form" style="display:none">
+        <input type="email" id="signup-email" placeholder="Email" required>
+        <input type="password" id="signup-password" placeholder="Password (min 6 chars)" required minlength="6">
+        <button type="submit" class="btn btn-primary">Sign Up</button>
+      </form>
+
+      <p id="auth-message" class="message"></p>
+    </div>
+  </div>
+
+  <!-- ==================== SETUP SCREEN ==================== -->
+  <div id="setup-screen" class="screen">
+    <div class="setup-container">
+      <h1>Welcome!</h1>
+      <p>Let's set up your japa tracking.</p>
+      <form id="setup-form">
+        <label for="setup-name">Your Name</label>
+        <input type="text" id="setup-name" placeholder="Enter your name" required>
+        <label for="setup-target">Japa Target (total rounds)</label>
+        <input type="number" id="setup-target" placeholder="e.g. 100000" min="1" required>
+        <button type="submit" class="btn btn-primary">Start Tracking</button>
+      </form>
+      <p id="setup-message" class="message"></p>
+    </div>
+  </div>
+
+  <!-- ==================== DASHBOARD ==================== -->
+  <div id="dashboard" class="screen">
+    <header>
+      <div class="header-left">
+        <h1 class="logo-sm">Japa Tracker</h1>
+      </div>
+      <div class="header-right">
+        <span id="user-name"></span>
+        <button id="settings-btn" class="btn btn-icon" title="Settings">&#9881;</button>
+        <button id="logout-btn" class="btn btn-sm">Log Out</button>
+      </div>
+    </header>
+
+    <main>
+      <!-- Progress Section -->
+      <section class="card progress-card">
+        <h2>Overall Progress</h2>
+        <div class="progress-info">
+          <span id="total-count">0</span> / <span id="target-count">0</span> rounds
+        </div>
+        <div class="progress-bar-container">
+          <div class="progress-bar" id="progress-bar" style="width: 0%"></div>
+        </div>
+        <div class="progress-percent" id="progress-percent">0%</div>
+      </section>
+
+      <!-- Add Japa Section -->
+      <section class="card add-card">
+        <h2>Add Japa Rounds</h2>
+        <form id="add-japa-form" class="add-form">
+          <input type="number" id="japa-input" placeholder="Number of rounds" min="1" required>
+          <input type="date" id="japa-date" required>
+          <button type="submit" class="btn btn-primary">Add</button>
+        </form>
+        <div class="today-total">
+          Today's total: <strong id="today-count">0</strong> rounds
+        </div>
+      </section>
+
+      <!-- Stats Grid -->
+      <section class="stats-grid">
+        <div class="card stat-card">
+          <div class="stat-label">This Week</div>
+          <div class="stat-value" id="stat-week">0</div>
+        </div>
+        <div class="card stat-card">
+          <div class="stat-label">This Month</div>
+          <div class="stat-value" id="stat-month">0</div>
+        </div>
+        <div class="card stat-card">
+          <div class="stat-label">Daily Average</div>
+          <div class="stat-value" id="stat-avg">0</div>
+        </div>
+        <div class="card stat-card">
+          <div class="stat-label">Best Day</div>
+          <div class="stat-value" id="stat-best">0</div>
+          <div class="stat-sub" id="stat-best-date"></div>
+        </div>
+        <div class="card stat-card">
+          <div class="stat-label">Current Streak</div>
+          <div class="stat-value" id="stat-streak">0</div>
+          <div class="stat-sub">days</div>
+        </div>
+        <div class="card stat-card">
+          <div class="stat-label">Best Day of Week</div>
+          <div class="stat-value" id="stat-best-dow">-</div>
+        </div>
+      </section>
+
+      <!-- Weekly Chart -->
+      <section class="card chart-card">
+        <h2>Last 7 Days</h2>
+        <div class="bar-chart" id="weekly-chart"></div>
+      </section>
+
+      <!-- Monthly Chart -->
+      <section class="card chart-card">
+        <h2>Monthly Totals</h2>
+        <div class="bar-chart" id="monthly-chart"></div>
+      </section>
+
+      <!-- History / Entries -->
+      <section class="card history-card">
+        <h2>Recent Entries</h2>
+        <table id="entries-table">
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Rounds</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="entries-body"></tbody>
+        </table>
+        <button id="load-more-btn" class="btn btn-sm" style="display:none">Load More</button>
+      </section>
+    </main>
+  </div>
+
+  <!-- ==================== SETTINGS MODAL ==================== -->
+  <div id="settings-modal" class="modal">
+    <div class="modal-content">
+      <h2>Settings</h2>
+      <form id="settings-form">
+        <label for="settings-name">Name</label>
+        <input type="text" id="settings-name" required>
+        <label for="settings-target">Japa Target</label>
+        <input type="number" id="settings-target" min="1" required>
+        <div class="modal-actions">
+          <button type="submit" class="btn btn-primary">Save</button>
+          <button type="button" class="btn btn-secondary" id="settings-cancel">Cancel</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ==================== EDIT ENTRY MODAL ==================== -->
+  <div id="edit-modal" class="modal">
+    <div class="modal-content">
+      <h2>Edit Entry</h2>
+      <form id="edit-form">
+        <input type="hidden" id="edit-id">
+        <label for="edit-count">Rounds</label>
+        <input type="number" id="edit-count" min="1" required>
+        <label for="edit-date">Date</label>
+        <input type="date" id="edit-date" required>
+        <div class="modal-actions">
+          <button type="submit" class="btn btn-primary">Save</button>
+          <button type="button" class="btn btn-danger" id="edit-delete">Delete</button>
+          <button type="button" class="btn btn-secondary" id="edit-cancel">Cancel</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
