@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Japa Tracker</title>
-  <link rel="stylesheet" href="style.css?v=4">
+  <link rel="stylesheet" href="style.css?v=6">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
@@ -49,7 +49,9 @@
       <form id="setup-form">
         <label for="setup-name">Your Name</label>
         <input type="text" id="setup-name" placeholder="Enter your name" required>
-        <label for="setup-target">Japa Target (total japas)</label>
+        <label for="setup-japa-name">Japa Name</label>
+        <input type="text" id="setup-japa-name" placeholder="e.g. Om Namah Shivaya" required>
+        <label for="setup-target">Target (total japas)</label>
         <input type="number" id="setup-target" placeholder="e.g. 100000" min="1" required>
         <button type="submit" class="btn btn-primary">Start Tracking</button>
       </form>
@@ -70,10 +72,15 @@
       </div>
     </header>
 
+    <!-- Japa Selector (shared across tabs) -->
+    <div class="japa-selector-bar">
+      <select id="japa-select"></select>
+    </div>
+
     <!-- ===== TAB: ADD (Home) ===== -->
     <main id="tab-add" class="tab-content active">
       <div class="add-hero">
-        <p class="add-greeting">Om Muruga, <span id="greeting-name"></span></p>
+        <p class="add-greeting">Hare Krishna, <span id="greeting-name"></span></p>
         <div class="today-badge">
           <span class="today-label">Today</span>
           <span class="today-value" id="today-count">0</span>
@@ -88,25 +95,6 @@
           <input type="date" id="japa-date" required>
           <button type="submit" class="btn btn-primary">Add</button>
         </form>
-      </section>
-
-    </main>
-
-    <!-- ===== TAB: HISTORY ===== -->
-    <main id="tab-history" class="tab-content">
-      <section class="card history-card">
-        <h2>Recent Entries</h2>
-        <table id="entries-table">
-          <thead>
-            <tr>
-              <th>Date</th>
-              <th>Japas</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody id="entries-body"></tbody>
-        </table>
-        <button id="load-more-btn" class="btn btn-sm" style="display:none">Load More</button>
       </section>
     </main>
 
@@ -167,6 +155,24 @@
       </section>
     </main>
 
+    <!-- ===== TAB: HISTORY ===== -->
+    <main id="tab-history" class="tab-content">
+      <section class="card history-card">
+        <h2>Recent Entries</h2>
+        <table id="entries-table">
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Japas</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="entries-body"></tbody>
+        </table>
+        <button id="load-more-btn" class="btn btn-sm" style="display:none">Load More</button>
+      </section>
+    </main>
+
     <!-- Bottom Nav -->
     <nav class="bottom-nav">
       <button class="nav-tab active" data-tab="tab-add">
@@ -186,18 +192,28 @@
 
   <!-- ==================== SETTINGS MODAL ==================== -->
   <div id="settings-modal" class="modal">
-    <div class="modal-content">
+    <div class="modal-content modal-lg">
       <h2>Settings</h2>
-      <form id="settings-form">
+
+      <form id="settings-profile-form" class="settings-section">
         <label for="settings-name">Name</label>
         <input type="text" id="settings-name" required>
-        <label for="settings-target">Japa Target</label>
-        <input type="number" id="settings-target" min="1" required>
-        <div class="modal-actions">
-          <button type="submit" class="btn btn-primary">Save</button>
-          <button type="button" class="btn btn-secondary" id="settings-cancel">Cancel</button>
-        </div>
+        <button type="submit" class="btn btn-primary btn-sm">Save Name</button>
       </form>
+
+      <div class="settings-section">
+        <h3>Your Japas</h3>
+        <div id="japas-list"></div>
+        <form id="add-new-japa-form" class="add-japa-inline">
+          <input type="text" id="new-japa-name" placeholder="New japa name" required>
+          <input type="number" id="new-japa-target" placeholder="Target" min="1" required>
+          <button type="submit" class="btn btn-primary btn-sm">Add</button>
+        </form>
+      </div>
+
+      <div class="modal-actions">
+        <button type="button" class="btn btn-secondary" id="settings-close">Close</button>
+      </div>
     </div>
   </div>
 
@@ -220,6 +236,25 @@
     </div>
   </div>
 
-  <script src="app.js?v=4"></script>
+  <!-- ==================== EDIT JAPA MODAL ==================== -->
+  <div id="edit-japa-modal" class="modal">
+    <div class="modal-content">
+      <h2>Edit Japa</h2>
+      <form id="edit-japa-form">
+        <input type="hidden" id="edit-japa-id">
+        <label for="edit-japa-name">Japa Name</label>
+        <input type="text" id="edit-japa-name" required>
+        <label for="edit-japa-target">Target</label>
+        <input type="number" id="edit-japa-target" min="1" required>
+        <div class="modal-actions">
+          <button type="submit" class="btn btn-primary">Save</button>
+          <button type="button" class="btn btn-danger" id="edit-japa-delete">Delete</button>
+          <button type="button" class="btn btn-secondary" id="edit-japa-cancel">Cancel</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="app.js?v=6"></script>
 </body>
 </html>
